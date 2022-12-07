@@ -2,6 +2,32 @@ use std::path::Path;
 use std::{fs::File};
 use std::io::{BufRead, BufReader};
 
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        let test_str =
+"1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000";
+        let test_data = test_str.split("\n").map(|s| s.to_owned()).collect();
+        assert_eq!(part1(test_data), 24000);
+    }
+}
+
 fn do_work(lines: Vec<String>, take: usize) -> i32 {
     let mut d = lines.iter().fold((vec![], 0), |(mut sums, sum), l| match l.as_str() {
         "" => {
