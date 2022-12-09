@@ -52,15 +52,8 @@ U 20";
 
 type Coord = (i32, i32);
 
-fn step(
-    h: Coord,
-    (tx, ty): Coord,
-    seen: HashSet<Coord>,
-    update: &dyn Fn(Coord) -> Coord,
-) -> (Coord, Coord, HashSet<Coord>) {
-    let (nhx, nhy) = update(h);
-
-    let nt = if ((nhx - tx) as i32).abs() > 1 {
+fn update((nhx, nhy): Coord, (tx, ty): Coord) -> Coord {
+    if ((nhx - tx) as i32).abs() > 1 {
         let x_mod = if nhx > tx { tx + 1 } else { tx - 1 };
         if nhy == ty {
             (x_mod, ty)
@@ -68,61 +61,6 @@ fn step(
             (x_mod, if nhy > ty { ty + 1 } else { ty - 1 })
         }
     } else if ((nhy - ty) as i32).abs() > 1 {
-        let y_mod = if nhy > ty { ty + 1 } else { ty - 1 };
-        if nhx == tx {
-            (nhx, y_mod)
-        } else {
-            (if nhx > tx { tx + 1 } else { tx - 1 }, y_mod)
-        }
-    } else {
-        (tx, ty)
-    };
-
-    ((nhx, nhy), nt, seen.insert(nt))
-}
-
-fn part1(lines: &Vec<String>) -> usize {
-    lines
-        .iter()
-        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
-            [a, d] => {
-                let n = d.parse::<usize>().expect("Couldn't parse");
-                match a {
-                    "L" => ("R", n, 0 - n as i32),
-                    "D" => ("U", n, 0 - n as i32),
-                    _ => (a, n, n as i32),
-                }
-            }
-            _ => unreachable!("What is this: {:?}", l),
-        })
-        .fold(
-            ((0, 0), (0, 0), HashSet::<Coord>::new()),
-            |(h, t, s), (dir, n, v)| {
-                vec![if v > 0 { 1 } else { -1 }; n].iter().fold(
-                    (h, t, s),
-                    |((hx, hy), (tx, ty), seen), i| {
-                        step((hx, hy), (tx, ty), seen, &|(x, y): Coord| match dir {
-                            "R" => (x + i, y),
-                            "U" => (x, y + i),
-                            _ => unreachable!("Where are you going?"),
-                        })
-                    },
-                )
-            },
-        )
-        .2
-        .len()
-}
-
-fn update((nhx, nhy): Coord, (tx, ty): Coord) -> Coord {
-    if ((nhx - tx) as i32).abs() >= 2 {
-        let x_mod = if nhx > tx { tx + 1 } else { tx - 1 };
-        if nhy == ty {
-            (x_mod, ty)
-        } else {
-            (x_mod, if nhy > ty { ty + 1 } else { ty - 1 })
-        }
-    } else if ((nhy - ty) as i32).abs() >= 2 {
         let y_mod = if nhy > ty { ty + 1 } else { ty - 1 };
         if nhx == tx {
             (tx, y_mod)
@@ -134,13 +72,13 @@ fn update((nhx, nhy): Coord, (tx, ty): Coord) -> Coord {
     }
 }
 
-fn step2(h: Coord, ts: Vec<Coord>) -> Vec<Coord> {
+fn step(h: Coord, ts: Vec<Coord>) -> Vec<Coord> {
     if ts.is_empty() {
         ts
     } else {
         let t = ts.first().unwrap();
         let nh = update(h, *t);
-        let nts = step2(nh, ts[1..].to_vec());
+        let nts = step(nh, ts[1..].to_vec());
         vec![nh]
             .into_iter()
             .chain(nts.into_iter())
@@ -148,41 +86,57 @@ fn step2(h: Coord, ts: Vec<Coord>) -> Vec<Coord> {
     }
 }
 
-fn part2(lines: &Vec<String>) -> usize {
+fn update_h((hx, hy): Coord, (dir, i): (&str, i32)) -> Coord {
+    match dir {
+        "R" => (hx + i, hy),
+        "U" => (hx, hy + i),
+        _ => unreachable!("Where are you going?"),
+    }
+}
+
+fn parse_step(l: &String) -> (String, Vec<i32>) {
+    match l.split(" ").collect::<Vec<_>>()[..] {
+        [a, d] => {
+            let n = d.parse::<usize>().expect("Couldn't parse");
+            match a {
+                "L" => ("R".to_string(), vec![-1; n]),
+                "D" => ("U".to_string(), vec![-1; n]),
+                _ => (a.to_string(), vec![1; n]),
+            }
+        }
+        _ => unreachable!("What is this: {:?}", l),
+    }
+}
+
+fn _do_work(lines: &Vec<String>, n: usize) -> usize {
     lines
         .iter()
-        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
-            [a, d] => {
-                let n = d.parse::<usize>().expect("Couldn't parse");
-                match a {
-                    "L" => ("R", vec![-1; n]),
-                    "D" => ("U", vec![-1; n]),
-                    _ => (a, vec![1; n]),
-                }
-            }
-            _ => unreachable!("What is this: {:?}", l),
-        })
+        .map(parse_step)
         .fold(
-            (((0, 0), vec![(0, 0); 9]), HashSet::<Coord>::new()),
+            (((0, 0), vec![(0, 0); n]), HashSet::<Coord>::new()),
             |(poss, s), (dir, steps)| {
-                let (n_poss, ns) = steps.iter().fold(
-                    (poss, HashSet::<Coord>::new()),
-                    |(((hx, hy), ts), ss), i| {
-                        let nh = match dir {
-                            "R" => (hx + i, hy),
-                            "U" => (hx, hy + i),
-                            _ => unreachable!("What are you trying to pull here?"),
-                        };
-                        let nt = step2(nh, ts);
-                        let nss = ss.insert(*nt.last().unwrap());
-                        ((nh, nt), nss)
-                    },
-                );
+                let (n_poss, ns) =
+                    steps
+                        .iter()
+                        .fold((poss, HashSet::<Coord>::new()), |((h, ts), seen), i| {
+                            let nh = update_h(h, (&dir, *i));
+                            let nt = step(nh, ts);
+                            let nseen = seen.insert(*nt.last().unwrap());
+                            ((nh, nt), nseen)
+                        });
                 (n_poss, s.union(ns))
             },
         )
         .1
         .len()
+}
+
+fn part1(lines: &Vec<String>) -> usize {
+    _do_work(lines, 1)
+}
+
+fn part2(lines: &Vec<String>) -> usize {
+    _do_work(lines, 9)
 }
 
 fn main() {
