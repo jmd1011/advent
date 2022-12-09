@@ -9,6 +9,7 @@ edition = "2021"
 array_tool = "1.0.3"
 csv = "1.1"
 ferris-says = "0.2"
+im = "10.2.0"
 itertools = "0.10.5"
 serde = { version = "1", features = ["derive"] }
 sscanf = "0.4.0"
