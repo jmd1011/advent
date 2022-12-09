@@ -108,7 +108,7 @@ fn parse_step(l: &String) -> (String, Vec<i32>) {
     }
 }
 
-fn _do_work(lines: &Vec<String>, n: usize) -> usize {
+fn do_work(lines: &Vec<String>, n: usize) -> usize {
     lines
         .iter()
         .map(parse_step)
@@ -132,11 +132,11 @@ fn _do_work(lines: &Vec<String>, n: usize) -> usize {
 }
 
 fn part1(lines: &Vec<String>) -> usize {
-    _do_work(lines, 1)
+    do_work(lines, 1)
 }
 
 fn part2(lines: &Vec<String>) -> usize {
-    _do_work(lines, 9)
+    do_work(lines, 9)
 }
 
 fn main() {
