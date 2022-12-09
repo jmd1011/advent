@@ -1,8 +1,8 @@
 use array_tool::vec::Intersect;
 
-use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 #[cfg(test)]
 mod test {
@@ -10,8 +10,7 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let test_str =
-"vJrwpWtwJgWrhcsFMMfFFhFp
+        let test_str = "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
@@ -23,8 +22,7 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
 
     #[test]
     fn test_part2() {
-        let test_str =
-"vJrwpWtwJgWrhcsFMMfFFhFp
+        let test_str = "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
@@ -36,15 +34,21 @@ CrZsJsPPZsGzwwsLwLmpwMDw";
 }
 
 fn letter_score(c: char) -> i32 {
-    1 + if c.is_lowercase() { c as i32 - 'a' as i32 } else { c as i32 - 'A' as i32 + 26 }
+    1 + if c.is_lowercase() {
+        c as i32 - 'a' as i32
+    } else {
+        c as i32 - 'A' as i32 + 26
+    }
 }
 
 fn part1a(line: &String) -> i32 {
     let l = line.len() / 2;
     let (r0, r1) = line.split_at(l);
-    r0.chars().collect::<Vec<char>>().intersect(r1.chars().collect())
-      .iter()
-      .fold(0, |acc, &c| acc + letter_score(c))
+    r0.chars()
+        .collect::<Vec<char>>()
+        .intersect(r1.chars().collect())
+        .iter()
+        .fold(0, |acc, &c| acc + letter_score(c))
 }
 
 fn part1(lines: Vec<String>) -> i32 {
@@ -52,11 +56,25 @@ fn part1(lines: Vec<String>) -> i32 {
 }
 
 fn to_chars(lines: &[String], idx: usize) -> Vec<char> {
-    lines.iter().nth(idx).expect("Unable to find it!").chars().collect()
+    lines
+        .iter()
+        .nth(idx)
+        .expect("Unable to find it!")
+        .chars()
+        .collect()
 }
 
 fn part2(lines: Vec<String>) -> i32 {
-    lines.chunks(3).fold(0, |acc, rs| acc + letter_score(*to_chars(rs, 0).intersect(to_chars(rs, 1)).intersect(to_chars(rs, 2)).iter().nth(0).expect("No intersection found!")))
+    lines.chunks(3).fold(0, |acc, rs| {
+        acc + letter_score(
+            *to_chars(rs, 0)
+                .intersect(to_chars(rs, 1))
+                .intersect(to_chars(rs, 2))
+                .iter()
+                .nth(0)
+                .expect("No intersection found!"),
+        )
+    })
 }
 
 fn main() {

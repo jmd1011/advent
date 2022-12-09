@@ -1,6 +1,6 @@
-use std::path::Path;
-use std::{fs::File};
+use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 #[cfg(test)]
 mod test {
@@ -8,8 +8,7 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let test_str =
-"1000
+        let test_str = "1000
 2000
 3000
 
@@ -29,13 +28,16 @@ mod test {
 }
 
 fn do_work(lines: Vec<String>, take: usize) -> i32 {
-    let mut d = lines.iter().fold((vec![], 0), |(mut sums, sum), l| match l.as_str() {
-        "" => {
-            sums.push(sum);
-            (sums, 0)
-        },
-        _ => (sums, sum + l.parse::<i32>().unwrap())
-    }).0;
+    let mut d = lines
+        .iter()
+        .fold((vec![], 0), |(mut sums, sum), l| match l.as_str() {
+            "" => {
+                sums.push(sum);
+                (sums, 0)
+            }
+            _ => (sums, sum + l.parse::<i32>().unwrap()),
+        })
+        .0;
     d.sort();
     d.iter().rev().take(take).sum()
 }

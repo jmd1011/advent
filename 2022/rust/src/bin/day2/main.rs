@@ -1,6 +1,6 @@
-use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 #[cfg(test)]
 mod test {
@@ -8,18 +8,16 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let test_str =
-"A Y
+        let test_str = "A Y
 B X
 C Z";
         let test_data = test_str.split("\n").map(|s| s.to_owned()).collect();
         assert_eq!(part1(test_data), 15);
     }
 
-        #[test]
+    #[test]
     fn test_part2() {
-        let test_str =
-"A Y
+        let test_str = "A Y
 B X
 C Z";
         let test_data = test_str.split("\n").map(|s| s.to_owned()).collect();
@@ -31,7 +29,7 @@ fn win_score(p: (&str, &str)) -> i32 {
     match p {
         (e, m) if m == get_win(e) => 6,
         (e, m) if m == get_tie(e) => 3,
-        _ => 0
+        _ => 0,
     }
 }
 
@@ -40,7 +38,7 @@ fn get_win(e: &str) -> &str {
         "A" => "Y",
         "B" => "Z",
         "C" => "X",
-        &_ => unreachable!()
+        &_ => unreachable!(),
     }
 }
 
@@ -49,7 +47,7 @@ fn get_tie(e: &str) -> &str {
         "A" => "X",
         "B" => "Y",
         "C" => "Z",
-        &_ => unreachable!()
+        &_ => unreachable!(),
     }
 }
 
@@ -58,7 +56,7 @@ fn get_loss(e: &str) -> &str {
         "A" => "Z",
         "B" => "X",
         "C" => "Y",
-        &_ => unreachable!()
+        &_ => unreachable!(),
     }
 }
 
@@ -67,24 +65,32 @@ fn score(p: (&str, &str)) -> i32 {
 }
 
 fn part1(lines: Vec<String>) -> i32 {
-    lines.iter()
-         .map(|l| l.split(" ").collect::<Vec<&str>>())
-         .map(|v| match &v[..] { &[a, b, ..] => (a, b), _ => unreachable!() })
-         .map(|z| score(z))
-         .sum()
+    lines
+        .iter()
+        .map(|l| l.split(" ").collect::<Vec<&str>>())
+        .map(|v| match &v[..] {
+            &[a, b, ..] => (a, b),
+            _ => unreachable!(),
+        })
+        .map(|z| score(z))
+        .sum()
 }
 
 fn part2(lines: Vec<String>) -> i32 {
-    lines.iter()
-         .map(|l| l.split(" ").collect::<Vec<&str>>())
-         .map(|v| match &v[..] { &[a, b, ..] => (a, b), _ => unreachable!() })
-         .map(|z| match z {
+    lines
+        .iter()
+        .map(|l| l.split(" ").collect::<Vec<&str>>())
+        .map(|v| match &v[..] {
+            &[a, b, ..] => (a, b),
+            _ => unreachable!(),
+        })
+        .map(|z| match z {
             (e, "X") => score((e, get_loss(e))),
             (e, "Y") => score((e, get_tie(e))),
             (e, "Z") => score((e, get_win(e))),
-            _ => unreachable!()
-            })
-         .sum()
+            _ => unreachable!(),
+        })
+        .sum()
 }
 
 fn main() {

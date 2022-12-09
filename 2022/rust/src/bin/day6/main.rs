@@ -1,8 +1,8 @@
+use itertools::Itertools;
 use std::collections::VecDeque;
-use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use itertools::Itertools;
+use std::path::Path;
 
 #[cfg(test)]
 mod test {
@@ -10,14 +10,14 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let test_str ="mjqjpqmgbljsphdztnvjfqwrcgsmlb";
+        let test_str = "mjqjpqmgbljsphdztnvjfqwrcgsmlb";
         let test_data = test_str.split("\n").map(|s| s.to_owned()).collect();
         assert_eq!(part1(&test_data), 7);
     }
 
     #[test]
     fn test_part2() {
-        let test_str ="mjqjpqmgbljsphdztnvjfqwrcgsmlb";
+        let test_str = "mjqjpqmgbljsphdztnvjfqwrcgsmlb";
         let test_data = test_str.split("\n").map(|s| s.to_owned()).collect();
         assert_eq!(part2(&test_data), 19);
     }
@@ -60,5 +60,7 @@ fn parse(filename: impl AsRef<Path>) -> String {
     let file = File::open(filename).expect("no such file");
     let buf = BufReader::new(file);
     buf.lines()
-        .map(|l| l.expect("Could not parse line")).nth(0).expect("No worky")
+        .map(|l| l.expect("Could not parse line"))
+        .nth(0)
+        .expect("No worky")
 }
