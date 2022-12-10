@@ -4,6 +4,94 @@ use std::path::Path;
 
 use itertools::Itertools;
 
+fn buildit(h: (usize, i32), cmds: Vec<(usize, i32)>) -> Vec<(usize, i32)> {
+    if cmds.is_empty() {
+        vec![h]
+    } else {
+        let t = cmds[0];
+        let (tv, tx) = t;
+        let nh = (tv + h.0, tx + h.1);
+        let nts = buildit(nh, cmds[1..].to_vec());
+        vec![h]
+            .into_iter()
+            .chain(nts.into_iter())
+            .collect::<Vec<_>>()
+    }
+}
+
+fn part1(lines: &Vec<String>) -> i32 {
+    let vals = lines
+        .iter()
+        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
+            ["addx", n] => (2, n.parse::<i32>().expect("wut")),
+            ["noop"] => (1, 0),
+            _ => unreachable!("How?"),
+        })
+        .collect::<Vec<_>>();
+
+    let done = buildit((0, 1), vals);
+    [20, 60, 100, 140, 180, 220].iter().fold(0, |acc, &cycle| {
+        let (_, x) = done.iter().rfind(|(v, _)| v < &cycle).expect("wat");
+        acc + cycle as i32 * x
+    })
+}
+
+fn foo((cycle, x): (usize, i32), tail: Vec<(usize, i32)>) -> String {
+    if tail.is_empty() {
+        "".to_string()
+    } else {
+        let (tv, tx) = tail[0];
+        let mod_c = cycle as i32 % 40;
+        let c = if mod_c >= x && mod_c <= x + 2 {
+            "#"
+        } else {
+            "."
+        };
+        println!(
+            "At cycle {:?} ({}), drawing {:?} because X = {:?}",
+            cycle, mod_c, c, x
+        );
+        if cycle < tv {
+            c.to_string() + &foo((cycle + 1, x), tail)
+        } else {
+            c.to_string() + &foo((tv + 1, tx), tail[1..].to_vec())
+        }
+    }
+}
+
+fn part2(lines: &Vec<String>) -> String {
+    let vals = lines
+        .iter()
+        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
+            ["addx", n] => (2, n.parse::<i32>().expect("wut")),
+            ["noop"] => (1, 0),
+            _ => unreachable!("How?"),
+        })
+        .collect::<Vec<_>>();
+
+    let done = &buildit((0, 1), vals)[1..];
+    foo((1, 1), done.to_vec())
+        .chars()
+        .chunks(40)
+        .into_iter()
+        .map(|mut cs| cs.join(""))
+        .join("\n")
+}
+
+fn main() {
+    let data = parse("./input/day10");
+    println!("{:}", part1(&data));
+    println!("{:}", part2(&data));
+}
+
+fn parse(filename: impl AsRef<Path>) -> Vec<String> {
+    let file = File::open(filename).expect("no such file");
+    let buf = BufReader::new(file);
+    buf.lines()
+        .map(|l| l.expect("Could not parse line"))
+        .collect()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -321,92 +409,4 @@ noop";
 #######.......#######.......#######....."
         );
     }
-}
-
-fn buildit(h: (usize, i32), cmds: Vec<(usize, i32)>) -> Vec<(usize, i32)> {
-    if cmds.is_empty() {
-        vec![h]
-    } else {
-        let t = cmds[0];
-        let (tv, tx) = t;
-        let nh = (tv + h.0, tx + h.1);
-        let nts = buildit(nh, cmds[1..].to_vec());
-        vec![h]
-            .into_iter()
-            .chain(nts.into_iter())
-            .collect::<Vec<_>>()
-    }
-}
-
-fn part1(lines: &Vec<String>) -> i32 {
-    let vals = lines
-        .iter()
-        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
-            ["addx", n] => (2, n.parse::<i32>().expect("wut")),
-            ["noop"] => (1, 0),
-            _ => unreachable!("How?"),
-        })
-        .collect::<Vec<_>>();
-
-    let done = buildit((0, 1), vals);
-    [20, 60, 100, 140, 180, 220].iter().fold(0, |acc, &cycle| {
-        let (_, x) = done.iter().rfind(|(v, _)| v < &cycle).expect("wat");
-        acc + cycle as i32 * x
-    })
-}
-
-fn foo((cycle, x): (usize, i32), tail: Vec<(usize, i32)>) -> String {
-    if tail.is_empty() {
-        "".to_string()
-    } else {
-        let (tv, tx) = tail[0];
-        let mod_c = cycle as i32 % 40;
-        let c = if mod_c >= x && mod_c <= x + 2 {
-            "#"
-        } else {
-            "."
-        };
-        println!(
-            "At cycle {:?} ({}), drawing {:?} because X = {:?}",
-            cycle, mod_c, c, x
-        );
-        if cycle < tv {
-            c.to_string() + &foo((cycle + 1, x), tail)
-        } else {
-            c.to_string() + &foo((tv + 1, tx), tail[1..].to_vec())
-        }
-    }
-}
-
-fn part2(lines: &Vec<String>) -> String {
-    let vals = lines
-        .iter()
-        .map(|l| match l.split(" ").collect::<Vec<_>>()[..] {
-            ["addx", n] => (2, n.parse::<i32>().expect("wut")),
-            ["noop"] => (1, 0),
-            _ => unreachable!("How?"),
-        })
-        .collect::<Vec<_>>();
-
-    let done = &buildit((0, 1), vals)[1..];
-    foo((1, 1), done.to_vec())
-        .chars()
-        .chunks(40)
-        .into_iter()
-        .map(|mut cs| cs.join(""))
-        .join("\n")
-}
-
-fn main() {
-    let data = parse("./input/day10");
-    println!("{:}", part1(&data));
-    println!("{:}", part2(&data));
-}
-
-fn parse(filename: impl AsRef<Path>) -> Vec<String> {
-    let file = File::open(filename).expect("no such file");
-    let buf = BufReader::new(file);
-    buf.lines()
-        .map(|l| l.expect("Could not parse line"))
-        .collect()
 }
