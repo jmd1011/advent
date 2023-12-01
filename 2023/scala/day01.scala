@@ -33,6 +33,6 @@ object Day1 extends App {
         }.sum
     }
 
-    println(part1(Source.fromFile("2023/input/scala/day01/real").getLines()))
-    println(part2(Source.fromFile("2023/input/scala/day01/real").getLines()))
+    println(part1(Source.fromFile("2023/input/day01/real").getLines()))
+    println(part2(Source.fromFile("2023/input/day01/real").getLines()))
 }
