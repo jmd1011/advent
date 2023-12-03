@@ -2,7 +2,7 @@ import scala.io.Source
 
 object Day1 extends App {
     class Entry(val num: Int, val color: String)
-    case class Score(val red: Int, val green: Int, val blue: Int)
+    class Score(val red: Int, val green: Int, val blue: Int)
     val start = new Score(0, 0, 0)
 
     def turn(t: String): Score = {
