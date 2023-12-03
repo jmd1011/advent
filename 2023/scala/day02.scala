@@ -1,6 +1,6 @@
 import scala.io.Source
 
-object Day1 extends App {
+object Day2 extends App {
     class Entry(val num: Int, val color: String)
     class Score(val red: Int, val green: Int, val blue: Int)
     val start = new Score(0, 0, 0)
