@@ -39,7 +39,7 @@ object Day3 extends App {
           .trim()
           .split('|')
           .map(_.trim)
-          .map(side => side.split(' ').filter(n => n != "").map(_.toInt).toList)
+          .map(side => side.split(' ').filter(_.nonEmpty).map(_.toInt).toList)
         (nums(0), nums(1))
       })
   }
