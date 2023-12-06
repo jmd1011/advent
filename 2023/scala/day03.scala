@@ -13,10 +13,6 @@ object Day3 extends App {
       Coord(this.x + 1, this.y - 1),
       Coord(this.x + 1, this.y + 1)
     )
-    override def equals(coord: Any): Boolean = coord match {
-      case c: Coord => c.x == this.x && c.y == this.y
-      case _        => false
-    }
   }
 
   class Schematic(schematic: List[List[Char]]) {
