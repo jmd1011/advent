@@ -123,21 +123,3 @@ object Day3 extends App {
     )
   )
 }
-          }
-          case _ => cur
-        }
-      }
-    }
-  }
-
-  println(
-    part1(
-      Source.fromFile("2023/input/day03/real").getLines().toList.map(_.toList)
-    )
-  )
-  println(
-    part2(
-      Source.fromFile("2023/input/day03/real").getLines().toList.map(_.toList)
-    )
-  )
-}
