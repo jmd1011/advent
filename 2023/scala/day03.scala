@@ -112,14 +112,9 @@ object Day3 extends App {
     }
   }
 
-  println(
-    part1(
-      Source.fromFile("2023/input/day03/real").getLines().toList.map(_.toList)
-    )
-  )
-  println(
-    part2(
-      Source.fromFile("2023/input/day03/real").getLines().toList.map(_.toList)
-    )
-  )
+  def inputLines(filename: String) =
+    Source.fromFile(s"2023/input/day03/$filename").getLines().toList
+
+  println(part1(inputLines("real").map(_.toList)))
+  println(part2(inputLines("real").map(_.toList)))
 }
