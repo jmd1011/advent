@@ -1,6 +1,6 @@
 import scala.io.Source
 
-object Day3 extends App {
+object Day4 extends App {
   def part1(lines: List[(List[Int], List[Int])]): Int = {
     lines
       .map { case (winners, ours) =>
