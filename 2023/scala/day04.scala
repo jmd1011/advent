@@ -7,7 +7,8 @@ object Day4 extends App {
         ours.filter(o => winners.contains(o)).length - 1
       }
       .map(math.pow(2, _).toInt)
-  }.sum
+      .sum
+  }
 
   def part2(cards: List[(List[Int], List[Int])]): Int = {
     cards.zipWithIndex
