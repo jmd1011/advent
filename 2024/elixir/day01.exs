@@ -17,12 +17,12 @@ lines = File.stream!("../input/day01") \
     |> Enum.map(&String.split/1)
 
 l = lines |> Enum.map(&hd/1) \
-    |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1) \
     |> Enum.sort
 
 r = lines |> Enum.map(&tl/1) \
     |> Enum.map(&hd/1) \
-    |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&String.to_integer/1) \
     |> Enum.sort
 
 IO.puts Day01.part1(l, r)
