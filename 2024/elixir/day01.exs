@@ -14,7 +14,6 @@ defmodule Day01 do
 end
 
 lines = File.stream!("../input/day01") \
-    |> Enum.map(&String.trim/1) \
     |> Enum.map(&String.split/1)
 
 l = lines |> Enum.map(&hd/1) \
@@ -28,4 +27,3 @@ r = lines |> Enum.map(&tl/1) \
 
 IO.puts Day01.part1(l, r)
 IO.puts Day01.part2(l, r)
-
