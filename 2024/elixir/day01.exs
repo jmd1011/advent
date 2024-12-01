@@ -6,8 +6,9 @@ defmodule Day01 do
     end
 
     def part2(l, r) do
+        freqs = Enum.frequencies(r)
         l \
-            |> Enum.map(fn x -> x * Enum.count(r, &(&1 == x)) end) \
+            |> Enum.map(&(&1 * Map.get(freqs, &1, 0))) \
             |> Enum.sum
     end
 end
