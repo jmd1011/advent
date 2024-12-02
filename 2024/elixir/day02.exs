@@ -10,58 +10,17 @@ defmodule Day02 do
   end
 
   def part2(lines) do
-    lines |> Enum.count(&damp(&1))
+    lines
+    |> Enum.count(&dampener(&1, []))
   end
 
-  defp is_valid(a, b, sign) do
-    diff = a - b
-
-    (sign * abs(diff)) in 1..3
+  defp dampener([head | tail], seen) do
+    is_safe(Enum.reverse(seen, tail)) or
+      dampener(tail, [head | seen])
   end
 
-  defp damp([a, b | tail] = line, can_ignore) do
-    diff = a - b
-    sign = div(diff, abs(diff))
-
-    cond do
-      is_valid(a, b, sign) ->
-        foo(line, sign, can_ignore)
-
-      damp([b | tail], false) ->
-        true
-
-      damp([a | tail], false) ->
-        true
-
-      true ->
-        false
-    end
-  end
-
-  defp damp([]), do: true
-  defp damp([h | []] = line), do: true
-
-  defp damp([_h | _tail] = line) do
-    damp(line, true)
-  end
-
-  defp foo([a, b, c | []], sign, can_ignore) do
-    comp = if can_ignore, do: &or/2, else: &and/2
-    comp.(is_valid(a, b, sign), comp.(is_valid(b, c, sign), is_valid(a, c, sign)))
-  end
-
-  defp foo([a, b, c | tail], sign, can_ignore) do
-    cond do
-      is_valid(b, c, sign) ->
-        foo([b, c, hd(tail) | tl(tail)], sign, can_ignore)
-
-      can_ignore ->
-        foo([a, c, hd(tail), tl(tail)], sign, false) or
-          foo([a, b, hd(tail), tl(tail)], sign, false)
-
-      true ->
-        false
-    end
+  defp dampener([], prefix) do
+    is_safe(prefix)
   end
 
   defp is_safe([head, head | _]), do: false
