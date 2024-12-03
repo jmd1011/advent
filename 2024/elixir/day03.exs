@@ -18,6 +18,7 @@ defmodule Day03 do
 
     p +
       (tl(pieces)
+       |> Enum.filter(fn piece -> length(piece) > 1 end)
        |> Enum.map(fn matches ->
          if length(matches) > 1 do
            Enum.drop(matches, 1) |> Enum.join() |> part1()
