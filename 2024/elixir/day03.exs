@@ -14,9 +14,7 @@ defmodule Day03 do
       String.split(lines, ~r/don't/)
       |> Enum.map(&String.split(&1, ~r/do/))
 
-    p = part1(hd(hd(pieces)))
-
-    p +
+    part1(hd(hd(pieces))) +
       (tl(pieces)
        |> Enum.filter(fn piece -> length(piece) > 1 end)
        |> Enum.map(&Enum.drop(&1, 1))
