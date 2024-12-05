@@ -58,7 +58,7 @@ defmodule Day04 do
       abs(
         hd(String.to_charlist(at(grid, move(pos, d1), "0"))) -
           hd(String.to_charlist(at(grid, move(pos, d2), "0")))
-      ) == 6
+      ) == abs(hd('M') - hd('S'))
     end)
   end
 
