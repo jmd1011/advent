@@ -22,16 +22,28 @@ defmodule Day05 do
     {graph, updates}
   end
 
-  def part1({graph, updates}) do
+  def score(updates) do
     updates
-    |> Enum.filter(&correct?(graph, &1, MapSet.new()))
     |> Enum.map(&middle(&1, 0, div(length(&1), 2)))
     |> Enum.map(&String.to_integer/1)
     |> Enum.sum()
   end
 
+  def part1({graph, updates}) do
+    updates
+    |> Enum.filter(&correct?(graph, &1, MapSet.new()))
+    |> score()
+  end
+
   def part2({graph, updates}) do
-    updates |> ENum.filter(&(!correct?(graph, &1, MapSet.new())))
+    updates
+    |> Enum.filter(&(!correct?(graph, &1, MapSet.new())))
+    |> Enum.map(fn update ->
+      Enum.sort(update, fn a, b ->
+        :digraph.out_neighbours(graph, a) |> MapSet.new() |> MapSet.member?(b)
+      end)
+    end)
+    |> score()
   end
 
   defp middle(l, curr, curr), do: hd(l)
@@ -47,4 +59,6 @@ defmodule Day05 do
   defp correct?(_, [], _), do: true
 end
 
-Day05.parse("../input/day05") |> tap(&IO.inspect(Day05.part1(&1)))
+Day05.parse("../input/day05")
+|> tap(&IO.inspect(Day05.part1(&1)))
+|> tap(&IO.inspect(Day05.part2(&1)))
