@@ -30,6 +30,10 @@ defmodule Day05 do
     |> Enum.sum()
   end
 
+  def part2({graph, updates}) do
+    updates |> ENum.filter(&(!correct?(graph, &1, MapSet.new())))
+  end
+
   defp middle(l, curr, curr), do: hd(l)
   defp middle([_ | t], curr, tgt), do: middle(t, curr + 1, tgt)
 
