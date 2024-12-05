@@ -65,6 +65,6 @@ defmodule Day04 do
   defp mas_include?(_, _, _), do: false
 end
 
-grid = Day04.parse("../input/day04")
-grid |> Day04.part1() |> IO.inspect()
-grid |> Day04.part2() |> IO.inspect()
+Day04.parse("../input/day04")
+|> tap(&IO.inspect(Day04.part1(&1)))
+|> tap(&IO.inspect(Day04.part2(&1)))
