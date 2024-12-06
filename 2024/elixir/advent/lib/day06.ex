@@ -25,6 +25,7 @@ defmodule Advent.Day06 do
 
     step(grid, MapSet.new(), start_pos, {-1, 0})
     |> elem(1)
+    |> MapSet.new()
     |> Enum.map(fn {pos, _} -> pos end)
     |> MapSet.new()
     |> MapSet.size()
@@ -37,22 +38,21 @@ defmodule Advent.Day06 do
     step(grid, MapSet.new(), start_pos, {-1, 0})
     |> elem(1)
     |> Enum.map(&elem(&1, 0))
+    |> MapSet.new()
     |> Enum.chunk_every(750)
     |> Enum.map(fn chunk ->
       Task.async(fn -> inner(chunk, grid, start_pos) end)
     end)
-    |> Task.await_many(6_000_000)
-    |> Enum.flat_map(fn x -> x end)
-    |> MapSet.new()
-    |> MapSet.size()
+    |> Task.await_many(6000)
+    |> Enum.sum()
   end
 
   defp inner(chunk, grid, start_pos) do
     chunk
-    |> Enum.reduce(MapSet.new(), fn pos, acc ->
+    |> Enum.reduce(0, fn pos, acc ->
       case step(Map.put(grid, pos, "#"), MapSet.new(), start_pos, {-1, 0}) do
         {:cyclic, _} ->
-          MapSet.put(acc, pos)
+          1 + acc
 
         _ ->
           acc
