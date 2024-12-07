@@ -28,6 +28,9 @@ defmodule Advent.Day07 do
   defp calibrated?(curr, target, _) when curr > target, do: false
 
   defp calibrated?(curr, target, [num | nums]) do
-    calibrated?(curr + num, target, nums) or calibrated?(curr * num, target, nums)
+    concat = ("#{curr}" <> "#{num}") |> String.to_integer()
+
+    calibrated?(curr + num, target, nums) or calibrated?(curr * num, target, nums) or
+      calibrated?(concat, target, nums)
   end
 end
