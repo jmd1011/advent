@@ -16,32 +16,32 @@ defmodule Advent.Day07 do
   end
 
   def part1() do
-    lines = parse()
-
-    lines
-    |> Enum.filter(fn {target, nums} -> calibrated?(target, nums, false) end)
-    |> Enum.map(&elem(&1, 0))
-    |> Enum.sum()
+    inner([&add/2, &mul/2])
   end
 
   def part2() do
-    lines = parse()
+    inner([&add/2, &mul/2, &concat/2])
+  end
 
-    lines
-    |> Enum.filter(fn {target, nums} -> calibrated?(target, nums, true) end)
+  defp inner(funcs) do
+    parse()
+    |> Enum.filter(fn {target, nums} -> calibrated?(target, nums, funcs) end)
     |> Enum.map(&elem(&1, 0))
     |> Enum.sum()
   end
 
-  defp calibrated?(target, nums, concat?), do: calibrated?(0, target, nums, concat?)
+  defp add(x, y), do: x + y
+  defp mul(x, y), do: x * y
+  defp concat(x, y), do: ("#{x}" <> "#{y}") |> String.to_integer()
+
+  defp calibrated?(target, nums, funcs), do: calibrated?(0, target, nums, funcs)
   defp calibrated?(curr, target, [], _), do: curr == target
   defp calibrated?(curr, target, _, _) when curr > target, do: false
 
-  defp calibrated?(curr, target, [num | nums], concat?) do
-    concat = ("#{curr}" <> "#{num}") |> String.to_integer()
-
-    calibrated?(curr + num, target, nums, concat?) or
-      calibrated?(curr * num, target, nums, concat?) or
-      (!concat? or calibrated?(concat, target, nums, concat?))
+  defp calibrated?(curr, target, [num | nums], funcs) do
+    funcs
+    |> Enum.any?(fn f ->
+      calibrated?(f.(curr, num), target, nums, funcs)
+    end)
   end
 end
