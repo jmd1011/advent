@@ -39,7 +39,7 @@ defmodule Advent.Day06 do
     |> elem(1)
     |> Enum.map(&elem(&1, 0))
     |> MapSet.new()
-    |> Enum.chunk_every(200)
+    |> Enum.chunk_every(1000)
     |> Enum.map(fn chunk ->
       Task.async(fn -> inner(chunk, grid, start_pos) end)
     end)
