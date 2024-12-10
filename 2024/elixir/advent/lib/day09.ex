@@ -55,7 +55,7 @@ defmodule Advent.Day09 do
     |> IO.inspect()
   end
 
-  defp find_space({_, start_pos, _} = file, [{_, free_pos} = fh | _] = frees)
+  defp find_space({_, start_pos, _} = file, [{_, free_pos} | _] = frees)
        when start_pos <= free_pos,
        do: {file, frees}
 
