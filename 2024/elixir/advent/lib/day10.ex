@@ -30,21 +30,22 @@ defmodule Advent.Day10 do
   end
 
   def part1 do
-    {graph, grid, max_pos} = parse()
-    {starts, ends} = get_paths(graph, grid, max_pos)
-
-    Enum.reduce(starts, 0, fn v1, acc ->
-      acc +
-        Enum.count(ends, fn v2 ->
-          :digraph.get_path(graph, v1, v2)
-        end)
+    parse()
+    |> then(fn {graph, grid, max_pos} ->
+      get_paths(graph, grid, max_pos)
+      |> Enum.reduce(0, fn {_, ends}, acc ->
+        acc + length(ends)
+      end)
     end)
+  end
+
+  def part2 do
+    {graph, grid, max_pos} = parse()
+    paths = get_paths(graph, grid, max_pos)
   end
 
   defp get_paths(graph, grid, {max_x, max_y}) do
     Enum.each(grid, fn {{x, y} = pos, h1} ->
-      # This is gross, clean this up.
-
       if x < max_x do
         pos2 = {x + 1, y}
         h2 = grid[pos2]
@@ -66,17 +67,11 @@ defmodule Advent.Day10 do
       starts = starts |> Enum.map(&elem(&1, 0))
       ends = ends |> Enum.map(&elem(&1, 0))
 
-      valid_starts =
-        Enum.filter(starts, fn v1 ->
-          Enum.any?(ends, fn v2 -> :digraph.get_path(graph, v1, v2) end)
-        end)
-
-      valid_ends =
-        Enum.filter(ends, fn v2 ->
-          Enum.any?(valid_starts, fn v1 -> :digraph.get_path(graph, v1, v2) end)
-        end)
-
-      {valid_starts, valid_ends}
+      starts
+      |> Enum.map(fn v1 ->
+        {v1, Enum.filter(ends, fn v2 -> :digraph.get_path(graph, v1, v2) end)}
+      end)
+      |> Enum.filter(fn {_, v2s} -> length(v2s) > 0 end)
     end)
   end
 
