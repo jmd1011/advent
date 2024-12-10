@@ -30,37 +30,53 @@ defmodule Advent.Day10 do
   end
 
   def part1 do
-    parse()
-    |> tap(fn {graph, grid, {max_x, max_y}} ->
-      Enum.each(grid, fn {{x, y} = pos, h1} ->
-        # This is gross, clean this up.
+    {graph, grid, max_pos} = parse()
+    {starts, ends} = get_paths(graph, grid, max_pos)
 
-        if x < max_x do
-          pos2 = {x + 1, y}
-          h2 = grid[pos2]
-          :digraph.vertex(graph, pos2)
-          add_edge(graph, pos, pos2, h1 - h2)
-        end
-
-        if y < max_y do
-          pos2 = {x, y + 1}
-          h2 = grid[pos2]
-          add_edge(graph, pos, pos2, h1 - h2)
-        end
-      end)
-    end)
-    |> then(fn {graph, grid, _} ->
-      grid
-      |> Enum.filter(fn {_, height} -> height == 0 or height == 9 end)
-      |> Enum.split_with(fn {_, height} -> height == 0 end)
-      |> then(fn {starts, ends} ->
-        Enum.reduce(starts, 0, fn {v1, _}, acc ->
-          acc +
-            Enum.count(ends, fn {v2, _} ->
-              :digraph.get_path(graph, v1, v2)
-            end)
+    Enum.reduce(starts, 0, fn v1, acc ->
+      acc +
+        Enum.count(ends, fn v2 ->
+          :digraph.get_path(graph, v1, v2)
         end)
-      end)
+    end)
+  end
+
+  defp get_paths(graph, grid, {max_x, max_y}) do
+    Enum.each(grid, fn {{x, y} = pos, h1} ->
+      # This is gross, clean this up.
+
+      if x < max_x do
+        pos2 = {x + 1, y}
+        h2 = grid[pos2]
+        :digraph.vertex(graph, pos2)
+        add_edge(graph, pos, pos2, h1 - h2)
+      end
+
+      if y < max_y do
+        pos2 = {x, y + 1}
+        h2 = grid[pos2]
+        add_edge(graph, pos, pos2, h1 - h2)
+      end
+    end)
+
+    grid
+    |> Enum.filter(fn {_, height} -> height == 0 or height == 9 end)
+    |> Enum.split_with(fn {_, height} -> height == 0 end)
+    |> then(fn {starts, ends} ->
+      starts = starts |> Enum.map(&elem(&1, 0))
+      ends = ends |> Enum.map(&elem(&1, 0))
+
+      valid_starts =
+        Enum.filter(starts, fn v1 ->
+          Enum.any?(ends, fn v2 -> :digraph.get_path(graph, v1, v2) end)
+        end)
+
+      valid_ends =
+        Enum.filter(ends, fn v2 ->
+          Enum.any?(valid_starts, fn v1 -> :digraph.get_path(graph, v1, v2) end)
+        end)
+
+      {valid_starts, valid_ends}
     end)
   end
 
