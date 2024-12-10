@@ -1,6 +1,7 @@
 defmodule Advent.Day10 do
   def run do
     part1() |> IO.inspect()
+    part2() |> IO.inspect()
   end
 
   defp parse do
@@ -41,7 +42,13 @@ defmodule Advent.Day10 do
 
   def part2 do
     {graph, grid, max_pos} = parse()
-    paths = get_paths(graph, grid, max_pos)
+
+    get_paths(graph, grid, max_pos)
+    |> Enum.map(fn {v1, ends} ->
+      Enum.each(ends, fn e -> :digraph.add_edge(graph, e, e) end)
+      Enum.map(ends, &count_paths(graph, v1, &1)) |> Enum.sum()
+    end)
+    |> Enum.sum()
   end
 
   defp get_paths(graph, grid, {max_x, max_y}) do
@@ -73,6 +80,15 @@ defmodule Advent.Day10 do
       end)
       |> Enum.filter(fn {_, v2s} -> length(v2s) > 0 end)
     end)
+  end
+
+  defp count_paths(_, v1, v1), do: 1
+
+  defp count_paths(graph, v1, v2) do
+    :digraph.out_neighbours(graph, v1)
+    |> Enum.filter(&:digraph.get_path(graph, &1, v2))
+    |> Enum.map(&count_paths(graph, &1, v2))
+    |> Enum.sum()
   end
 
   defp add_edge(g, v1, v2, -1), do: :digraph.add_edge(g, v1, v2)
