@@ -25,7 +25,7 @@ defmodule Advent.Day09 do
   end
 
   defp val(pos, {blocks, id}) do
-    Enum.reduce(blocks..1, {pos, 0}, fn block, {pos, acc} ->
+    Enum.reduce(blocks..1, {pos, 0}, fn _, {pos, acc} ->
       {pos + 1, acc + pos * id}
     end)
     |> elem(1)
@@ -38,7 +38,7 @@ defmodule Advent.Day09 do
   defp step(pos, front_ptr, back_ptr, files, [0 | frees], :free),
     do: step(pos, front_ptr, back_ptr, files, frees, :file)
 
-  defp step(pos, front_ptr, back_ptr, files, [free | ft] = frees, :free) do
+  defp step(pos, front_ptr, back_ptr, files, [free | ft], :free) do
     {blocks, id} = Arrays.get(files, back_ptr)
 
     nblocks = blocks - 1
@@ -56,13 +56,13 @@ defmodule Advent.Day09 do
         front_ptr,
         nback_ptr,
         Arrays.replace(files, back_ptr, {blocks - 1, id}),
-        [free - 1 | frees],
+        [free - 1 | ft],
         :free
       )
   end
 
   defp step(pos, front_ptr, back_ptr, files, frees, :file) do
-    {blocks, id} = file = Arrays.get(files, front_ptr)
+    {blocks, _} = file = Arrays.get(files, front_ptr)
     val(pos, file) + step(pos + blocks, front_ptr + 1, back_ptr, files, frees, :free)
   end
 end
