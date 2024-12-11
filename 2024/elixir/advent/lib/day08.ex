@@ -5,34 +5,33 @@ defmodule Advent.Day08 do
   end
 
   def parse() do
-    lines =
-      File.read!("../../input/day08")
-      |> String.split()
-      |> then(fn lines ->
-        max_pos = {String.length(hd(lines)), length(lines)}
+    File.read!("../../input/day08")
+    |> String.split()
+    |> then(fn lines ->
+      max_pos = {String.length(hd(lines)), length(lines)}
 
-        mapping =
-          lines
+      mapping =
+        lines
+        |> Enum.with_index()
+        |> Enum.flat_map(fn {line, row} ->
+          String.graphemes(line)
           |> Enum.with_index()
-          |> Enum.flat_map(fn {line, row} ->
-            String.graphemes(line)
-            |> Enum.with_index()
-            |> Enum.flat_map(fn {char, col} ->
-              position = {row, col}
-              [{char, position}]
-            end)
+          |> Enum.flat_map(fn {char, col} ->
+            position = {row, col}
+            [{char, position}]
           end)
-          |> Enum.filter(fn {char, _} -> char != "." end)
-          |> Enum.reduce(Map.new(), fn {char, pos}, acc ->
-            if !Map.has_key?(acc, char) do
-              Map.put(acc, char, [pos])
-            else
-              Map.put(acc, char, [pos | acc[char]])
-            end
-          end)
+        end)
+        |> Enum.filter(fn {char, _} -> char != "." end)
+        |> Enum.reduce(Map.new(), fn {char, pos}, acc ->
+          if !Map.has_key?(acc, char) do
+            Map.put(acc, char, [pos])
+          else
+            Map.put(acc, char, [pos | acc[char]])
+          end
+        end)
 
-        {mapping, max_pos}
-      end)
+      {mapping, max_pos}
+    end)
   end
 
   def part1() do
