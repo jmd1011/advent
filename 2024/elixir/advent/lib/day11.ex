@@ -20,17 +20,16 @@ defmodule Advent.Day11 do
     parse() |> Enum.map(&count(&1, 75)) |> Enum.sum()
   end
 
-  defmemo(count(_, 0), do: 1)
+  defmemop(count(_, 0), do: 1)
 
-  defmemo count(x, n) do
+  defmemop count(x, n) do
     step(x) |> Enum.map(&count(&1, n - 1)) |> Enum.sum()
   end
 
-  def step(x) do
-    cond do
-      x == "0" ->
-        ["1"]
+  defp step("0"), do: ["1"]
 
+  defp step(x) do
+    cond do
       rem(String.length(x), 2) == 0 ->
         x
         |> String.split_at(div(String.length(x), 2))
