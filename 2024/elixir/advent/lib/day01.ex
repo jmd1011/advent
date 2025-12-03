@@ -15,7 +15,7 @@ defmodule Advent.Day01 do
 
   def part1() do
     {l, r} = parse()
-    List.zip([l, r]) |> Enum.map(fn {a, b} -> abs(a - b) end) |> Enum.sum()
+    List.zip([l, r]) |> Enum.map(&abs(elem(&1, 0) - elem(&1, 1))) |> Enum.sum()
   end
 
   def part2() do

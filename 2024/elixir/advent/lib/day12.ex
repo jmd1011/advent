@@ -27,7 +27,7 @@ defmodule Advent.Day12 do
     char_to_coord
     |> Enum.reduce(0, fn {_, positions}, res ->
       letter =
-        Enum.reduce(positions, {0, MapSet.new()}, fn {x, y} = pos, {acc, seen} ->
+        Enum.reduce(positions, {0, MapSet.new()}, fn {_, _} = pos, {acc, seen} ->
           {area, perim, nseen} = step(pos, coord_to_char, seen)
           # IO.inspect("{#{x},#{y}} = #{area} * #{perim}")
           # if area > 0 do

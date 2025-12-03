@@ -66,7 +66,7 @@ defmodule Advent.Day04 do
       abs(
         hd(String.to_charlist(at(grid, move(pos, d1), "0"))) -
           hd(String.to_charlist(at(grid, move(pos, d2), "0")))
-      ) == abs(hd('M') - hd('S'))
+      ) == abs(?M - ?S)
     end)
   end
 
