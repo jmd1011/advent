@@ -1,56 +1,45 @@
 defmodule Advent.Day05 do
   def run do
     parse()
-    |> tap(&IO.puts(inspect(part1_2(&1))))
+    |> solve()
+    |> IO.inspect()
   end
 
   defp parse do
-    lines =
+    {ranges_, [_ | inputs]} =
       File.stream!("../../input/day05")
-      |> Stream.map(&String.trim/1)
-      |> Stream.chunk_by(fn line -> line != "" end)
-      |> Stream.filter(fn chunk -> chunk != [""] end)
-      |> Enum.to_list()
-
-    [ranges_, inputs] = lines
+      |> Enum.map(&String.trim/1)
+      |> Enum.split_while(&(&1 != ""))
 
     ranges =
       for range <- ranges_,
           [left, right] = String.split(range, "-"),
           do: {String.to_integer(left), String.to_integer(right)}
 
-    {ranges |> Enum.sort_by(fn {l, _} -> l end), inputs |> Enum.map(&String.to_integer/1)}
+    {ranges |> Enum.sort_by(&elem(&1, 0)) |> Enum.reduce([], &union/2),
+     inputs |> Enum.map(&String.to_integer/1)}
   end
 
-  defp union([], r), do: [r]
+  defp union(r, []), do: [r]
 
-  defp union([{l1, r1} | t], {l2, r2}) when l2 in l1..r1//1 do
-    [{l1, max(r1, r2)}] ++ t
+  defp union({l2, r2}, [{l1, r1} | t]) when l1 <= l2 and l2 <= r1 + 1 do
+    [{l1, max(r1, r2)} | t]
   end
 
-  defp union([{l1, r1} | t], {l2, r2}), do: [{l1, r1}] ++ union(t, {l2, r2})
+  defp union({l2, r2}, [{l1, r1} | t]), do: [{l1, r1} | union({l2, r2}, t)]
 
-  defp part1_2(input) do
-    {ranges, inputs} = input
-
-    c_ranges =
-      ranges
-      |> Enum.reduce([], fn range, acc ->
-        union(acc, range)
-      end)
-
+  defp solve({ranges, inputs}) do
     num_fresh =
-      c_ranges
+      ranges
       |> Enum.reduce(0, fn {l, r}, acc ->
-        acc + Enum.count(l..r)
+        acc + r - l + 1
       end)
 
     fresh_inputs =
       inputs
-      |> Enum.filter(fn input ->
-        Enum.any?(c_ranges, fn {l, r} -> input in l..r end)
+      |> Enum.count(fn input ->
+        Enum.any?(ranges, fn {l, r} -> input in l..r end)
       end)
-      |> Enum.count()
 
     {fresh_inputs, num_fresh}
   end
