@@ -22,7 +22,7 @@ defmodule Advent.Day05 do
 
   defp union(r, []), do: [r]
 
-  defp union({l2, r2}, [{l1, r1} | t]) when l1 <= l2 and l2 <= r1 + 1 do
+  defp union({l2, r2}, [{l1, r1} | t]) when l1 - 1 <= l2 and l2 <= r1 + 1 do
     [{l1, max(r1, r2)} | t]
   end
 
