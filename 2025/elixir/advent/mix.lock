@@ -1,0 +1,3 @@
+%{
+  "collections": {:hex, :collections, "0.2.0", "15481176adc698e96355cbd2a57a0d1393e70f71e14a3db7d10907c501bfa69f", [:mix], [], "hexpm", "a27fe0443fb38989cf3b38226150954666210e47a95da43a4feaac04d8863cca"},
+}
