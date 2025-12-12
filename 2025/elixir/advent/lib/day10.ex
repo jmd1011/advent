@@ -202,7 +202,7 @@ defmodule Advent.Day10 do
 
   defp normalize_row(row, pivot_val) when pivot_val >= 0, do: row
 
-  defp normalize_row(row, pivot_val) do
+  defp normalize_row(row, _) do
     row
     |> Enum.reduce(row, fn {k, v}, acc ->
       Map.put(acc, k, -v)
@@ -316,18 +316,18 @@ defmodule Advent.Day10 do
     end
   end
 
-  defp print_row(row) do
-    row
-    |> Enum.each(fn {_, v} -> IO.write("#{v} ") end)
-  end
+  # defp print_row(row) do
+  #   row
+  #   |> Enum.each(fn {_, v} -> IO.write("#{v} ") end)
+  # end
 
-  defp print_matrix(map) do
-    map
-    |> Enum.each(fn {_, v} ->
-      print_row(v)
-      IO.puts("")
-    end)
-  end
+  # defp print_matrix(map) do
+  #   map
+  #   |> Enum.each(fn {_, v} ->
+  #     print_row(v)
+  #     IO.puts("")
+  #   end)
+  # end
 
   defp part2(input) do
     input
